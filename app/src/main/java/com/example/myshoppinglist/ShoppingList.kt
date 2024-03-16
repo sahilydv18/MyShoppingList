@@ -1,6 +1,8 @@
 package com.example.myshoppinglist
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,9 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 
@@ -63,7 +70,7 @@ fun ShoppingListApp() {
                 .padding(16.dp)       // modifier is used to modify properties, here we want lazy column to have all the available space
         ) {
             items(sItems) {     // This will add items to lazy column
-
+                ShoppingListItems(item = it, onEditClick = { /*TODO*/ }, onDeleteClick = {})    // Used the function here to display the items
             }
         }
     }
@@ -123,5 +130,37 @@ fun ShoppingListApp() {
                 }
             }
         )
+    }
+}
+
+@Composable
+fun ShoppingListItems(          // Function used to display item
+    item: ShoppingItems,
+    onEditClick: () -> Unit,        // Lambda function for what should happen on edit button click
+    onDeleteClick: () -> Unit       // Lambda function for what should happen on delete button click
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .border(        // Added border to the row
+                border = BorderStroke(2.dp, Color(0xFFD0BCFF)),
+                shape = RoundedCornerShape(20)
+            )
+    ) {
+        Text(text = item.name, modifier = Modifier.padding(8.dp))
+        Text(text = "Qty: ${item.quantity}", modifier = Modifier.padding(8.dp))
+        Row(
+            modifier = Modifier.padding(8.dp)
+        ) {
+            //Edit Button
+            IconButton(onClick = { onEditClick }) {     // Icon Button is used where a button only has icon
+                Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Button")
+            }
+            //Delete Button
+            IconButton(onClick = { onDeleteClick }) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Button")
+            }
+        }
     }
 }

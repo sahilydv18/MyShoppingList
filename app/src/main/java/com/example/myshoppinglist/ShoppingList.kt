@@ -221,11 +221,11 @@ fun ShoppingListItem(          // Function used to display item
             modifier = Modifier.padding(8.dp)
         ) {
             //Edit Button
-            IconButton(onClick = { onEditClick }) {     // Icon Button is used where a button only has icon
+            IconButton(onClick = onEditClick) {     // Icon Button is used where a button only has icon
                 Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Button")
             }
             //Delete Button
-            IconButton(onClick = { onDeleteClick }) {
+            IconButton(onClick = onDeleteClick) {
                 Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Button")
             }
         }

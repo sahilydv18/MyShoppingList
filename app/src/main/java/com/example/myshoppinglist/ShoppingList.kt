@@ -1,7 +1,7 @@
 package com.example.myshoppinglist
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -32,17 +34,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 
-data class ShoppingItems(       // Data class that will contain information about the item we want to add
+data class ShoppingItem(       // Data class that will contain information about the item we want to add
     val id: Int,
-    val name: String,
-    val quantity: Int,
+    var name: String,
+    var quantity: Int,
     val isEditing: Boolean = false
 )
 
 @Composable
 fun ShoppingListApp() {
     var sItems by remember {
-        mutableStateOf(listOf<ShoppingItems>())     // We can also store lists in states
+        mutableStateOf(listOf<ShoppingItem>())     // We can also store lists in states
     }
     var showDialog by remember {                // State for alert dialog
         mutableStateOf(false)
@@ -70,7 +72,28 @@ fun ShoppingListApp() {
                 .padding(16.dp)       // modifier is used to modify properties, here we want lazy column to have all the available space
         ) {
             items(sItems) {     // This will add items to lazy column
-                ShoppingListItems(item = it, onEditClick = { /*TODO*/ }, onDeleteClick = {})    // Used the function here to display the items
+                item ->  // Renamed it to item, this means the item that we are currently at or the item that the user has clicked
+                if(item.isEditing) {        // Checking if the current item is in editing state or not
+                    ShoppingItemEditor(item = item, onEditComplete = {
+                        editedName, editedQuantity ->    // Given two inputs one as String(editedName) and one as Int(editedQuantity) to the lambda function
+                        sItems = sItems.map { it.copy(isEditing = false) }      // Updating the each item inside sItems and setting the isEditing value of edited item to false
+                        val editedItem = sItems.find { it.id == item.id }       // Finding which item is currently edited by using id by going through each element in the list using find{} and 'it'(find return the items one by one) and compares it to the 'item' user have clicked
+                        editedItem?.let {                          // Finally updating the values of edited item
+                            it.name = editedName
+                            it.quantity = editedQuantity
+                        }
+                    })
+                } else {
+                    ShoppingListItem(item = item,
+                        onEditClick = {
+                            // Updating the list and then setting the isEditing value of the item that the user has clicked(currently wants to edit) to true by comparing all the elements inside the list one by one
+                            sItems = sItems.map { it.copy(isEditing = it.id == item.id) }
+                        },
+                        onDeleteClick = {
+                            // Deleting the item from the list
+                            sItems = sItems - item
+                        })
+                }
             }
         }
     }
@@ -87,7 +110,7 @@ fun ShoppingListApp() {
                                 // Add Button
                                 Button(onClick = {
                                     if(itemName.isNotBlank() && itemQuantity.isNotBlank()) {        // Checking if the user entered item name and quantity
-                                        val newItem = ShoppingItems(id = sItems.size + 1,
+                                        val newItem = ShoppingItem(id = sItems.size + 1,
                                             name = itemName,
                                             quantity = itemQuantity.toIntOrNull() ?: 0
                                         )
@@ -134,8 +157,51 @@ fun ShoppingListApp() {
 }
 
 @Composable
-fun ShoppingListItems(          // Function used to display item
-    item: ShoppingItems,
+fun ShoppingItemEditor(
+    item: ShoppingItem,
+    onEditComplete: (String, Int) -> Unit
+    ) {
+    var editedName by remember {
+        mutableStateOf(item.name)
+    }
+    var editedQuantity by remember {
+        mutableStateOf(item.quantity.toString())
+    }
+    var isEditing by remember {
+        mutableStateOf(item.isEditing)
+    }
+
+    Row(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+            .background(Color.White),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Column {
+            // Text Field for editing name
+            BasicTextField(value = editedName, onValueChange = {editedName = it}, singleLine = true, modifier = Modifier
+                .wrapContentSize()
+                .padding(8.dp))     // Modifier.wrapContentSize() will give text field only the space that our text will need
+            // Text Field for editing quantity
+            BasicTextField(value = editedQuantity, onValueChange = {editedQuantity = it}, singleLine = true, modifier = Modifier
+                .wrapContentSize()
+                .padding(8.dp))
+        }
+
+        // Save Button
+        Button(onClick = {
+            isEditing = false
+            onEditComplete(editedName, editedQuantity.toIntOrNull() ?: 0)
+        }) {
+            Text(text = "Save")
+        }
+    }
+}
+
+@Composable
+fun ShoppingListItem(          // Function used to display item
+    item: ShoppingItem,
     onEditClick: () -> Unit,        // Lambda function for what should happen on edit button click
     onDeleteClick: () -> Unit       // Lambda function for what should happen on delete button click
 ) {
@@ -146,7 +212,8 @@ fun ShoppingListItems(          // Function used to display item
             .border(        // Added border to the row
                 border = BorderStroke(2.dp, Color(0xFFD0BCFF)),
                 shape = RoundedCornerShape(20)
-            )
+            ),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = item.name, modifier = Modifier.padding(8.dp))
         Text(text = "Qty: ${item.quantity}", modifier = Modifier.padding(8.dp))

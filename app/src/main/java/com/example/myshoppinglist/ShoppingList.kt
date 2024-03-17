@@ -21,6 +21,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -175,7 +176,7 @@ fun ShoppingItemEditor(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .background(Color.White),
+            .background(color = MaterialTheme.colorScheme.onBackground),    // This will change the row background color to the opposite of the theme color of android
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         Column {
@@ -210,7 +211,7 @@ fun ShoppingListItem(          // Function used to display item
             .fillMaxWidth()
             .padding(8.dp)
             .border(        // Added border to the row
-                border = BorderStroke(2.dp, Color(0xFFD0BCFF)),
+                border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.primary),     // Now the border color will change according to the primary color of the user
                 shape = RoundedCornerShape(20)
             ),
         horizontalArrangement = Arrangement.SpaceBetween

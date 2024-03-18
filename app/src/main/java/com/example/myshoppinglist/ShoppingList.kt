@@ -175,7 +175,7 @@ fun ShoppingItemEditor(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.onBackground),    // This will change the row background color to the opposite of the theme color of android
+            .background(color = MaterialTheme.colorScheme.inversePrimary),    // This will change the row background color to the inverted version of the primary color of android
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         Column {

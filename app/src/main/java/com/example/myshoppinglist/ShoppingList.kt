@@ -98,6 +98,7 @@ fun ShoppingListApp() {
         }
     }
 
+    // Add item dialog
     if(showDialog) {        // Checking if user wants to add an item
         AlertDialog(onDismissRequest = { showDialog = false },
             confirmButton = {       // This is used to confirm choices in alert dialog
@@ -156,6 +157,7 @@ fun ShoppingListApp() {
     }
 }
 
+// Shopping Item Editor Layout
 @Composable
 fun ShoppingItemEditor(
     item: ShoppingItem,
@@ -199,6 +201,7 @@ fun ShoppingItemEditor(
     }
 }
 
+// Shopping Item Layout
 @Composable
 fun ShoppingListItem(          // Function used to display item
     item: ShoppingItem,
